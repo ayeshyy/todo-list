@@ -3,17 +3,22 @@ const { redirect } = require("express/lib/response");
 const app = express();
 const mongoose = require("mongoose");
 const _ = require("lodash");
-let port = process.env.PORT || 3000;
+let PORT = process.env.PORT || 3000;
 
-require('dotenv').config();
+require("dotenv").config();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.set("view engine", "ejs");
 
-mongoose.connect(process.env.MONGODB_URL, {
-  useNewUrlParser: true,
-});
+mongoose
+  .connect(process.env.CONNECTION_URL, {
+    useNewUrlParser: true,
+  })
+  .then(() =>
+    app.listen(PORT, () => console.log(`Server is started on ${PORT}`))
+  )
+  .catch((error) => console.log(error));
 
 const listItemSchema = new mongoose.Schema({
   name: {
@@ -121,8 +126,4 @@ app.post("/delete", function (req, res) {
       }
     );
   }
-});
-
-app.listen(port, function () {
-  console.log("Server has startedon port " + port);
 });
